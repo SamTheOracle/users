@@ -32,7 +32,6 @@ import io.vertx.core.json.JsonObject;
 public class MqttClientService implements IMqttActionListener, MqttCallbackExtended {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-
 	private static final String MERGE_TOPIC = "users/sync/merge";
 	private static final String RETRY_SYNC_TOPIC = "users/u2t/sync/retry";
 	private static final String RETRY_SYNC_TOPIC_REPLY = "users/t2u/sync/retry";
@@ -58,12 +57,9 @@ public class MqttClientService implements IMqttActionListener, MqttCallbackExten
 	@Inject
 	MergeListener mergeListener;
 
-
-
 	private MqttAsyncClient mqttClient;
 
 	void init(@Observes StartupEvent event) {
-
 
 		MqttConnectOptions connOpts = new MqttConnectOptions();
 		connOpts.setCleanSession(true);
@@ -101,7 +97,7 @@ public class MqttClientService implements IMqttActionListener, MqttCallbackExten
 	public void connectComplete(boolean reconnect, String serverURI) {
 		logger.info("{}onnected to {}.", reconnect ? "Ric" : "C", serverURI);
 		try {
-			mqttClient.subscribe(MERGE_TOPIC,0,)
+			mqttClient.subscribe(MERGE_TOPIC, 0, mergeListener);
 			mqttClient.subscribe(RETRY_SYNC_TOPIC_REPLY, 0, syncListener);
 			logger.info("Done subscribing");
 		} catch (MqttException e) {
@@ -124,7 +120,6 @@ public class MqttClientService implements IMqttActionListener, MqttCallbackExten
 		logger.trace("Delivery complete {}.", token);
 
 	}
-
 
 	private synchronized void sendMessage(String topic, byte[] message) {
 		try {

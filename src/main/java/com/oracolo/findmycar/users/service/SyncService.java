@@ -1,6 +1,5 @@
 package com.oracolo.findmycar.users.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,33 +29,35 @@ public class SyncService {
 	@Inject
 	MqttClientService mqttClientService;
 
+	@Inject
+	UserService userService;
+
 	void onTelegramUserMessage(@Observes TelegramUserMessage telegramUserMessage) {
 		logger.debug("Received event {}", telegramUserMessage);
-		Optional<User> userOptional = Optional.empty();
-		if(userOptional.isEmpty()){
+		Optional<User> userOptional = userService.getUserByUniqueKey(telegramUserMessage.uniqueKeyValue);
+		if (userOptional.isEmpty()) {
 			logger.debug("Received a message for a non existing user");
 			return;
 		}
 		User user = userOptional.get();
-		user.chatId = telegramUserMessage.chatId;
-
-
-
-		//TODO
+		user.setChatId(telegramUserMessage.chatId);
+		logger.debug("Updating user {}", user);
 	}
 
 	void onKeyChatValuesMessage(@Observes KeyChatValuesMessage keyChatValuesMessage) {
 		logger.debug("Received event {}", keyChatValuesMessage);
-		//TODO
+		userService.updateUsers(keyChatValuesMessage);
 	}
 
-	@Scheduled(every = "5s",concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
-	void checkOutOfSyncUsers(){
+	@Scheduled(every = "5s", delay = 10, concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+	void checkOutOfSyncUsers() {
 		logger.trace("Checking out of sync users");
-		List<User> outOfSyncUsers = new ArrayList<>();
-		RetrySyncMessage retrySyncMessage = syncConverter.to(outOfSyncUsers);
-		mqttClientService.sendRetrySyncMessage(retrySyncMessage);
+		List<User> outOfSyncUsers = userService.getAllUserWithChatIdNull();
+		if (!outOfSyncUsers.isEmpty()) {
+			logger.debug("Asking for chatId for users {}", outOfSyncUsers);
+			RetrySyncMessage retrySyncMessage = syncConverter.to(outOfSyncUsers);
+			mqttClientService.sendRetrySyncMessage(retrySyncMessage);
+		}
 	}
-
 
 }

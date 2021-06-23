@@ -16,7 +16,7 @@ public class SyncConverter {
 	public RetrySyncMessage to(List<User> users){
 		RetrySyncMessage retrySyncMessage = new RetrySyncMessage();
 		retrySyncMessage.messageId = UUID.randomUUID().toString();
-		retrySyncMessage.uniqueKeys = users.stream().map(user -> user.uniqueKey).collect(Collectors.toUnmodifiableList());
+		retrySyncMessage.uniqueKeys = users.stream().map(User::getUniqueKey).collect(Collectors.toUnmodifiableList());
 		return retrySyncMessage;
 	}
 

@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.oracolo.findmycar.users.mqtt.MergeListener;
 import com.oracolo.findmycar.users.mqtt.SyncListener;
+import com.oracolo.findmycar.users.mqtt.messages.RetrySyncMessage;
 
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.core.json.JsonObject;
@@ -119,6 +120,10 @@ public class MqttClientService implements IMqttActionListener, MqttCallbackExten
 	public void deliveryComplete(IMqttDeliveryToken token) {
 		logger.trace("Delivery complete {}.", token);
 
+	}
+
+	public void sendRetrySyncMessage(RetrySyncMessage message){
+		sendMessage(RETRY_SYNC_TOPIC,convert(message));
 	}
 
 	private synchronized void sendMessage(String topic, byte[] message) {

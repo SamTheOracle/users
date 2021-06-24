@@ -1,4 +1,4 @@
-CREATE TABLE usersdb.users (
+CREATE TABLE users (
 	id MEDIUMINT auto_increment NOT NULL,
 	email varchar(255) NULL,
 	name varchar(255) NULL,

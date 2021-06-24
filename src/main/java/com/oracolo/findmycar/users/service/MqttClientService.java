@@ -113,7 +113,7 @@ public class MqttClientService implements IMqttActionListener, MqttCallbackExten
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		logger.trace("Received message {} from {}.", new String(message.getPayload()), topic);
+		logger.trace("Received message {} to {}.", new String(message.getPayload()), topic);
 	}
 
 	@Override

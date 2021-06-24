@@ -2,6 +2,7 @@ package com.oracolo.findmycar.users.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,6 +19,13 @@ public class UserService {
 	@Inject
 	UserDao userDao;
 
+	@Transactional
+	public String createUserAndGetUniqueKey(User user){
+		String uniqueKey = UUID.randomUUID().toString();
+		user.setUniqueKey(uniqueKey);
+		userDao.insert(user);
+		return uniqueKey;
+	}
 	@Transactional
 	public void insert(User user) {
 		userDao.insert(user);

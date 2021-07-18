@@ -1,19 +1,19 @@
 package com.oracolo.findmycar.users.rest.dto;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 public class UserDto {
 	public Long id;
-	@NotEmpty
+	@NotBlank
 	public String email;
-	@NotEmpty
+	@NotBlank
 	public String name;
-	@NotEmpty
+	@NotBlank
 	public String pictureUrl;
 	public String locale;
 	public String familyName;
 	public String givenName;
-	public String chatId;
+	public Long chatId;
 	public String uniqueKey;
 
 	@Override

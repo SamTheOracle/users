@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import com.oracolo.findmycar.users.entity.User;
@@ -38,6 +39,16 @@ public class UserDao extends BaseDao<User>{
 		CriteriaQuery<User> cq = cb.createQuery(User.class);
 		Root<User> root = cq.from(User.class);
 		cq.where(root.get("uniqueKey").in(uniqueKeys));
+		return em.createQuery(cq).getResultList();
+	}
+
+	public List<User> getUserByQuery(String uniqueKey) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> root = cq.from(User.class);
+		Predicate uniqueKeyPredicate = cb.equal(root.get("uniqueKey"),uniqueKey);
+
+		cq.where(cb.and(uniqueKeyPredicate));
 		return em.createQuery(cq).getResultList();
 	}
 }

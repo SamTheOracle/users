@@ -61,4 +61,14 @@ public class UserService {
 		}
 
 	}
+
+	public List<User> getUsersByQuery(String uniqueKey) {
+		return userDao.getUserByQuery(uniqueKey);
+	}
+
+	@Transactional
+	public void mergeUser(User user, Long chatId) {
+		user.setChatId(chatId);
+		userDao.update(user);
+	}
 }

@@ -33,4 +33,11 @@ public class BaseTest {
 		return userDto;
 
 	}
+	protected static UserDto createUserDto(String email, String name, String pictureUrl){
+		UserDto userDto = new UserDto();
+		userDto.email = email;
+		userDto.name = name;
+		userDto.pictureUrl = pictureUrl;
+		return userDto;
+	}
 }

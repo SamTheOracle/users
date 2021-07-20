@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.oracolo.findmycar.users.mqtt.MergeListener;
 import com.oracolo.findmycar.users.mqtt.SyncListener;
+import com.oracolo.findmycar.users.mqtt.messages.RetrySyncMessage;
 
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.core.json.JsonObject;
@@ -31,7 +32,6 @@ import io.vertx.core.json.JsonObject;
 @ApplicationScoped
 public class MqttClientService implements IMqttActionListener, MqttCallbackExtended {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
-
 
 	private static final String MERGE_TOPIC = "users/sync/merge";
 	private static final String RETRY_SYNC_TOPIC = "users/u2t/sync/retry";
@@ -58,12 +58,9 @@ public class MqttClientService implements IMqttActionListener, MqttCallbackExten
 	@Inject
 	MergeListener mergeListener;
 
-
-
 	private MqttAsyncClient mqttClient;
 
 	void init(@Observes StartupEvent event) {
-
 
 		MqttConnectOptions connOpts = new MqttConnectOptions();
 		connOpts.setCleanSession(true);
@@ -101,7 +98,7 @@ public class MqttClientService implements IMqttActionListener, MqttCallbackExten
 	public void connectComplete(boolean reconnect, String serverURI) {
 		logger.info("{}onnected to {}.", reconnect ? "Ric" : "C", serverURI);
 		try {
-			mqttClient.subscribe(MERGE_TOPIC,0,)
+			mqttClient.subscribe(MERGE_TOPIC, 0, mergeListener);
 			mqttClient.subscribe(RETRY_SYNC_TOPIC_REPLY, 0, syncListener);
 			logger.info("Done subscribing");
 		} catch (MqttException e) {
@@ -116,7 +113,7 @@ public class MqttClientService implements IMqttActionListener, MqttCallbackExten
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		logger.trace("Received message {} from {}.", new String(message.getPayload()), topic);
+		logger.trace("Received message {} to {}.", new String(message.getPayload()), topic);
 	}
 
 	@Override
@@ -125,6 +122,9 @@ public class MqttClientService implements IMqttActionListener, MqttCallbackExten
 
 	}
 
+	public void sendRetrySyncMessage(RetrySyncMessage message){
+		sendMessage(RETRY_SYNC_TOPIC,convert(message));
+	}
 
 	private synchronized void sendMessage(String topic, byte[] message) {
 		try {

@@ -6,17 +6,16 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import com.oracolo.findmycar.users.entity.User;
 import com.oracolo.findmycar.users.mqtt.messages.RetrySyncMessage;
-import com.oracolo.findmycar.users.mqtt.messages.TelegramUserMessage;
+import com.oracolo.findmycar.users.rest.dto.UserDto;
 
 @ApplicationScoped
 public class SyncConverter {
 
-	public RetrySyncMessage to(List<User> users){
+	public RetrySyncMessage to(List<UserDto> users){
 		RetrySyncMessage retrySyncMessage = new RetrySyncMessage();
 		retrySyncMessage.messageId = UUID.randomUUID().toString();
-		retrySyncMessage.uniqueKeys = users.stream().map(User::getUniqueKey).collect(Collectors.toUnmodifiableList());
+		retrySyncMessage.uniqueKeys = users.stream().map(userDto -> userDto.uniqueKey).collect(Collectors.toUnmodifiableList());
 		return retrySyncMessage;
 	}
 

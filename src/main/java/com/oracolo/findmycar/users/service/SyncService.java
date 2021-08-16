@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.oracolo.findmycar.users.entity.User;
 import com.oracolo.findmycar.users.mqtt.converter.SyncConverter;
 import com.oracolo.findmycar.users.mqtt.messages.KeyChatValuesMessage;
 import com.oracolo.findmycar.users.mqtt.messages.RetrySyncMessage;
@@ -33,15 +32,15 @@ public class SyncService {
 	UserService userService;
 
 	void onTelegramUserMessage(@Observes TelegramUserMessage telegramUserMessage) {
-		logger.debug("Received event {}", telegramUserMessage);
-		Optional<User> userOptional = userService.getUserByUniqueKey(telegramUserMessage.uniqueKeyValue);
-		if (userOptional.isEmpty()) {
-			logger.debug("Received a message for a non existing user");
-			return;
-		}
-		User user = userOptional.get();
-		user.setChatId(telegramUserMessage.chatId);
-		logger.debug("Updating user {}", user);
+//		logger.debug("Received event {}", telegramUserMessage);
+//		Optional<User> userOptional = userService.getUserByUniqueKey(telegramUserMessage.uniqueKeyValue);
+//		if (userOptional.isEmpty()) {
+//			logger.debug("Received a message for a non existing user");
+//			return;
+//		}
+//		User user = userOptional.get();
+//		user.setChatId(telegramUserMessage.chatId);
+//		logger.debug("Updating user {}", user);
 	}
 
 	void onKeyChatValuesMessage(@Observes KeyChatValuesMessage keyChatValuesMessage) {
@@ -51,13 +50,13 @@ public class SyncService {
 
 	@Scheduled(every = "5s", delay = 10, concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
 	void checkOutOfSyncUsers() {
-		logger.trace("Checking out of sync users");
-		List<User> outOfSyncUsers = userService.getAllUserWithChatIdNull();
-		if (!outOfSyncUsers.isEmpty()) {
-			logger.debug("Asking for chatId for users {}", outOfSyncUsers);
-			RetrySyncMessage retrySyncMessage = syncConverter.to(outOfSyncUsers);
-			mqttClientService.sendRetrySyncMessage(retrySyncMessage);
-		}
+//		logger.trace("Checking out of sync users");
+//		List<User> outOfSyncUsers = userService.getAllUserWithChatIdNull();
+//		if (!outOfSyncUsers.isEmpty()) {
+//			logger.debug("Asking for chatId for users {}", outOfSyncUsers);
+//			RetrySyncMessage retrySyncMessage = syncConverter.to(outOfSyncUsers);
+//			mqttClientService.sendRetrySyncMessage(retrySyncMessage);
+//		}
 	}
 
 }

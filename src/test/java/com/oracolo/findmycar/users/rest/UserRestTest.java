@@ -13,7 +13,9 @@ import com.oracolo.findmycar.users.rest.dto.UniqueKeyDto;
 import com.oracolo.findmycar.users.rest.dto.UserDto;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.response.Response;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
@@ -21,7 +23,6 @@ import io.vertx.core.json.JsonArray;
 @QuarkusTest
 class UserRestTest extends BaseTest{
 
-	private static final String UNIQUE_KEY = "kjsdfhò";
 	@Test
 	@DisplayName("Create new google user to token")
 	void createNewUserFromToken(){
@@ -30,6 +31,8 @@ class UserRestTest extends BaseTest{
 		String fullName = "Giacomo Zanotti";
 		String pictureUrl = "https://test.google.com/picture";
 		createNewUser(email,fullName,pictureUrl);
+
+//		UserDto userDto = getUserById()
 
 	}
 	@Test

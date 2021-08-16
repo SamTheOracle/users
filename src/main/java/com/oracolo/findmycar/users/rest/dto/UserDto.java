@@ -3,7 +3,7 @@ package com.oracolo.findmycar.users.rest.dto;
 import javax.validation.constraints.NotBlank;
 
 public class UserDto {
-	public Long id;
+	public String id;
 	@NotBlank
 	public String email;
 	@NotBlank

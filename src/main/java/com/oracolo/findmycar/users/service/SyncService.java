@@ -4,6 +4,7 @@ import static com.oracolo.findmycar.users.auth.KeycloakConverter.CHAT_ID;
 
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -53,13 +54,14 @@ public class SyncService {
 	@Scheduled(every = "5s", delay = 10, concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
 	void checkOutOfSyncUsers() {
 		logger.trace("Checking out of sync users");
-		List<UserRepresentation> keycloakUsersOutOfSync = keycloakService.getUsers();
 		Predicate<UserRepresentation> userRepresentationPredicate = userRepresentation -> {
 			if (userRepresentation.getAttributes() == null) {
 				return false;
 			}
-			return userRepresentation.getAttributes().get(CHAT_ID) != null;
+			return userRepresentation.getAttributes().get(CHAT_ID) == null;
 		};
+		List<UserRepresentation> keycloakUsersOutOfSync = keycloakService.getUsers().stream().filter(userRepresentationPredicate).collect(
+				Collectors.toUnmodifiableList());
 		if (!keycloakUsersOutOfSync.isEmpty()) {
 			logger.debug("Asking for chatId for users {}", keycloakUsersOutOfSync);
 			RetrySyncMessage retrySyncMessage = syncConverter.to(keycloakUsersOutOfSync);

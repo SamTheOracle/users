@@ -15,21 +15,25 @@ import com.oracolo.findmycar.users.rest.dto.UserDto;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.Response;
-import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonArray;
 
 @QuarkusTest
 class UserRestTest extends BaseTest{
 
-	private static final String UNIQUE_KEY = "kjsdfhò";
+	private final static String EMAIL_A = "gzano93@gmail.com";
+	private final static String EMAIL_B = "unaltramail@mail2.com";
+
 	@Test
 	@DisplayName("Create new google user to token")
 	void createNewUserFromToken(){
 
-		String email = "gzano93@gmail.com";
+		String email = EMAIL_A;
 		String fullName = "Giacomo Zanotti";
 		String pictureUrl = "https://test.google.com/picture";
 		createNewUser(email,fullName,pictureUrl);
+
+		UserDto userDto = getUserByEmail(email);
+		Assertions.assertEquals(email,userDto.email);
+		Assertions.assertEquals(pictureUrl,userDto.pictureUrl);
 
 	}
 	@Test
@@ -73,35 +77,20 @@ class UserRestTest extends BaseTest{
 		Assertions.assertEquals(HttpResponseStatus.BAD_REQUEST.code(),response1.getStatusCode());
 		ErrorDto responseMessage = response1.getBody().as(ErrorDto.class);
 		Assertions.assertEquals("Invalid user email",responseMessage.message);
-
-		UserDto userDto2 = new UserDto();
-		userDto2.email = "gzano93@gmail.com";
-		userDto2.name = "Giacomo Zanotti";
-		userDto2.pictureUrl = "klajdblk";
-		Response response2 = given().body(userDto2).contentType(MediaType.APPLICATION_JSON).post("/users/google");
-		Assertions.assertEquals(HttpResponseStatus.BAD_REQUEST.code(),response2.getStatusCode());
-		ErrorDto responseMessage2 = response2.getBody().as(ErrorDto.class);
-		Assertions.assertEquals("Invalid picture url",responseMessage2.message);
 	}
-
 
 	@Test
 	@DisplayName("Should get user by unique key")
 	void shouldGetUserByUniqueKey(){
-		String email = "marco@acaso.it";
-		String name = "Marco";
-		String pictureUrl = "https://www.bestpic.com";
-		UniqueKeyDto uniqueKeyDto = createNewUser(email,name,pictureUrl);
-		Response response = given().queryParam("uniqueKey",uniqueKeyDto.uniqueKey).get("/users/google");
-		int status = response.getStatusCode();
-		Assertions.assertEquals(HttpResponseStatus.OK.code(),status);
-		JsonArray userArray = new JsonArray(response.body().asString());
-		Assertions.assertEquals(1,userArray.size());
-		UserDto userDto = Json.decodeValue(userArray.getJsonObject(0).encode(),UserDto.class);
+		String email = EMAIL_B;
+		String fullName = "Giacomo Zanotti";
+		String pictureUrl = "https://test.google.com/picture";
+		UniqueKeyDto uniqueKeyDto = createNewUser(email,fullName,pictureUrl);
+
+		UserDto userDto = getUserById(uniqueKeyDto.uniqueKey);
 		Assertions.assertEquals(email,userDto.email);
-		Assertions.assertEquals(name,userDto.name);
 		Assertions.assertEquals(pictureUrl,userDto.pictureUrl);
-		Assertions.assertNotNull(userDto.id);
 	}
+
 
 }

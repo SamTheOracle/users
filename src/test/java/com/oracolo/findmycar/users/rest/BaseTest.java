@@ -25,7 +25,14 @@ public class BaseTest {
 		Assertions.assertNotNull(uniqueKeyDto.uniqueKey);
 		return uniqueKeyDto;
 	}
-	protected static UserDto getUserById(long id){
+	protected static UserDto getUserByEmail(String email){
+		Response response = given().queryParam("email",email).get("/users/google");
+		Assertions.assertEquals(HttpResponseStatus.OK.code(),response.getStatusCode());
+		UserDto userDto = response.as(UserDto.class);
+		Assertions.assertNotNull(userDto.uniqueKey);
+		return userDto;
+	}
+	protected static UserDto getUserById(String id){
 		Response response = given().get("/users/google/"+id);
 		Assertions.assertEquals(HttpResponseStatus.OK.code(),response.getStatusCode());
 		UserDto userDto = response.as(UserDto.class);

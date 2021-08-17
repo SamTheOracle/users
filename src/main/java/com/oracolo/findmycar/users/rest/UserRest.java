@@ -2,11 +2,14 @@ package com.oracolo.findmycar.users.rest;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -18,7 +21,6 @@ import com.oracolo.findmycar.users.rest.converter.UniqueKeyConverter;
 import com.oracolo.findmycar.users.rest.dto.UniqueKeyDto;
 import com.oracolo.findmycar.users.rest.dto.UserDto;
 import com.oracolo.findmycar.users.rest.validators.GoogleUserValidator;
-import com.oracolo.findmycar.users.service.UserService;
 
 @RequestScoped
 @Path("users")
@@ -48,8 +50,15 @@ public class UserRest {
 	@GET
 	@Path("google")
 	@Produces(MediaType.APPLICATION_JSON)
-	public UserDto getUserByQuery(@QueryParam("email") String email){
-		return keycloakConverter.to(keycloakService.getUserByEmail(email).orElseThrow(()->new BadRequestException("User not found")));
+	public UserDto getUserByEmail(@NotNull @QueryParam("email") String email){
+		return keycloakConverter.to(keycloakService.getUserByEmail(email).orElseThrow(()->new NotFoundException("User not found")));
+	}
+
+	@GET
+	@Path("google/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public UserDto getUserById(@NotBlank @PathParam("id") String id){
+		return keycloakConverter.to(keycloakService.getUserById(id).orElseThrow(()->new NotFoundException("User not found")));
 	}
 
 }

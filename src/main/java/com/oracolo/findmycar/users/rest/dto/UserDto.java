@@ -8,18 +8,17 @@ public class UserDto {
 	public String email;
 	@NotBlank
 	public String name;
-	@NotBlank
 	public String pictureUrl;
 	public String locale;
 	public String familyName;
-	public String givenName;
 	public Long chatId;
 	public String uniqueKey;
+	public String userName;
 
 	@Override
 	public String toString() {
-		return "UserDto{" + "id=" + id + ", email='" + email + '\'' + ", name='" + name + '\'' + ", pictureUrl='" + pictureUrl + '\''
-				+ ", locale='" + locale + '\'' + ", familyName='" + familyName + '\'' + ", givenName='" + givenName + '\'' + ", chatId='"
-				+ chatId + '\'' + ", uniqueKey='" + uniqueKey + '\'' + '}';
+		return "UserDto{" + "id='" + id + '\'' + ", email='" + email + '\'' + ", name='" + name + '\'' + ", pictureUrl='" + pictureUrl
+				+ '\'' + ", locale='" + locale + '\'' + ", familyName='" + familyName + '\'' + ", chatId=" + chatId + ", uniqueKey='"
+				+ uniqueKey + '\'' + ", userName='" + userName + '\'' + '}';
 	}
 }

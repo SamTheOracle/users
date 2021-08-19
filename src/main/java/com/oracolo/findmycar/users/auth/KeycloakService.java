@@ -49,7 +49,14 @@ public class KeycloakService {
 	@PostConstruct
 	void init() {
 		keycloak = Keycloak.getInstance(keycloakUrl, "master", keycloakAdmin, keycloakAdminPass, clientId);
-		roleRepresentations = keycloak.realm(realm).roles().list();
+		try{
+			roleRepresentations = keycloak.realm(realm).roles().list();
+		}catch (Exception e){
+			logger.debug("Could not find any roles. Adding roles {}",Role.USER);
+			RoleRepresentation roleRepresentation = new RoleRepresentation();
+			roleRepresentation.setName("user");
+			roleRepresentations.add(roleRepresentation);
+		}
 	}
 
 	public String createKeycloakUser(UserRepresentation user) {

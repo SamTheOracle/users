@@ -2,6 +2,9 @@ package com.oracolo.findmycar.users.rest.dto;
 
 import javax.validation.constraints.NotBlank;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
+@RegisterForReflection
 public class UserDto {
 	public String id;
 	@NotBlank

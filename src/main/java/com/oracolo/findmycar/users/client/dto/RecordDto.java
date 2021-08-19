@@ -1,5 +1,8 @@
 package com.oracolo.findmycar.users.client.dto;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
+@RegisterForReflection
 public class RecordDto {
 
 	public LocationDto location;

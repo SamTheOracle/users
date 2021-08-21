@@ -17,6 +17,7 @@ public class UserDto {
 	public Long chatId;
 	public String uniqueKey;
 	public String userName;
+	public String password;
 
 	@Override
 	public String toString() {

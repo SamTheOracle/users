@@ -60,6 +60,13 @@ public class KeycloakService {
 	}
 
 	public String createKeycloakUser(UserRepresentation user) {
+		Optional<UserRepresentation> userRepresentationOptional = getUserByEmail(user.getEmail());
+		if(userRepresentationOptional.isPresent()){
+			UserRepresentation userRepresentation = userRepresentationOptional.get();
+			UserResource userResource = keycloak.realm(realm).users().get(userRepresentation.getId());
+			userResource.update(user);
+			return userRepresentation.getId();
+		}
 		Response response = keycloak.realm(realm).users().create(user);
 		if (HttpResponseStatus.CREATED.code() != response.getStatus()) {
 			throw new BadRequestException("Could not create user");
@@ -75,7 +82,12 @@ public class KeycloakService {
 	}
 
 	public Optional<UserRepresentation> getUserByEmail(String email) {
-		return keycloak.realm(realm).users().search(email, true).stream().findFirst();
+		try{
+			return keycloak.realm(realm).users().search(email, true).stream().findFirst();
+		}catch (Exception e){
+			logger.error("Did not find user.",e);
+			return Optional.empty();
+		}
 	}
 
 	public Optional<UserRepresentation> getUserById(String id) {

@@ -19,6 +19,7 @@ public class BaseTest {
 		userDto.email = email;
 		userDto.name = fullName;
 		userDto.pictureUrl = pictureUrl;
+		userDto.password="test_password";
 		Response response = given().body(userDto).contentType(MediaType.APPLICATION_JSON).post("/users/google");
 		Assertions.assertEquals(HttpResponseStatus.CREATED.code(),response.getStatusCode());
 		UniqueKeyDto uniqueKeyDto = response.as(UniqueKeyDto.class);

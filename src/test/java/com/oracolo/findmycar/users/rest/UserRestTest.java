@@ -21,6 +21,7 @@ class UserRestTest extends BaseTest{
 
 	private final static String EMAIL_A = "gzano93@gmail.com";
 	private final static String EMAIL_B = "unaltramail@mail2.com";
+	private final static String EMAIL_C = "mailacaso@mail2.com";
 
 	@Test
 	@DisplayName("Create new google user to token")
@@ -47,6 +48,7 @@ class UserRestTest extends BaseTest{
 		userDto2.email = " ";
 		userDto2.pictureUrl="https://test.google.com/picture";
 		userDto2.name = "Giacomo Zanotti";
+		userDto2.password="test";
 		Response response2 = given().body(userDto2).contentType(MediaType.APPLICATION_JSON).post("/users/google");
 		Assertions.assertEquals(HttpResponseStatus.BAD_REQUEST.code(),response2.getStatusCode());
 
@@ -54,6 +56,7 @@ class UserRestTest extends BaseTest{
 		userDto3.email = "gzano93@gmail.com";
 		userDto3.pictureUrl=" ";
 		userDto3.name = "Giacomo Zanotti";
+		userDto3.password="test";
 		Response response3 = given().body(userDto3).contentType(MediaType.APPLICATION_JSON).post("/users/google");
 		Assertions.assertEquals(HttpResponseStatus.BAD_REQUEST.code(),response3.getStatusCode());
 
@@ -61,8 +64,17 @@ class UserRestTest extends BaseTest{
 		userDto4.email = "gzano93@gmail.com";
 		userDto4.pictureUrl="https://test.google.com/picture";
 		userDto4.name = "    ";
+		userDto4.password="test";
 		Response response4 = given().body(userDto4).contentType(MediaType.APPLICATION_JSON).post("/users/google");
 		Assertions.assertEquals(HttpResponseStatus.BAD_REQUEST.code(),response4.getStatusCode());
+
+		UserDto userDto5 = new UserDto();
+		userDto4.email = "gzano93@gmail.com";
+		userDto4.pictureUrl="https://test.google.com/picture";
+		userDto4.name = "Giacomo";
+		userDto4.password=" ";
+		Response response5 = given().body(userDto5).contentType(MediaType.APPLICATION_JSON).post("/users/google");
+		Assertions.assertEquals(HttpResponseStatus.BAD_REQUEST.code(),response5.getStatusCode());
 
 	}
 	@Test
@@ -77,6 +89,25 @@ class UserRestTest extends BaseTest{
 		Assertions.assertEquals(HttpResponseStatus.BAD_REQUEST.code(),response1.getStatusCode());
 		ErrorDto responseMessage = response1.getBody().as(ErrorDto.class);
 		Assertions.assertEquals("Invalid user email",responseMessage.message);
+	}
+
+	@Test
+	@DisplayName("Update user if exists")
+	void shouldUpdateUserIfExists(){
+		String fullName = "Giacomo Zanotti";
+		String pictureUrl = "https://test.google.com/picture";
+		createNewUser(EMAIL_C,fullName,pictureUrl);
+
+		UserDto userDto = getUserByEmail(EMAIL_C);
+		Assertions.assertEquals(EMAIL_C,userDto.email);
+		Assertions.assertEquals(pictureUrl,userDto.pictureUrl);
+
+		String newName = "Giacomo";
+		createNewUser(EMAIL_C,newName,pictureUrl);
+		UserDto userDtoUpdated = getUserByEmail(EMAIL_C);
+		Assertions.assertEquals(EMAIL_C,userDtoUpdated.email);
+		Assertions.assertEquals(pictureUrl,userDtoUpdated.pictureUrl);
+		Assertions.assertEquals(newName,userDtoUpdated.name);
 	}
 
 	@Test

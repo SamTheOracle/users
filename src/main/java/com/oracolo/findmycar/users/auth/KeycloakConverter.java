@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import com.oracolo.findmycar.users.rest.dto.UserDto;
@@ -16,11 +17,17 @@ public class KeycloakConverter {
 	private final static String PHOTO_URL = "photo_url";
 	public final static String CHAT_ID = "chat_id";
 	private final static String LOCALE = "locale";
+	private static final String PASSWORD = "password";
 
 	public UserRepresentation from(UserDto user) {
 		UserRepresentation userRepresentation = new UserRepresentation();
 		userRepresentation.setUsername(user.email);
 		userRepresentation.setEmailVerified(true);
+		CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+		credentialRepresentation.setType(PASSWORD);
+		credentialRepresentation.setTemporary(false);
+		credentialRepresentation.setValue(user.password);
+		userRepresentation.setCredentials(List.of(credentialRepresentation));
 		userRepresentation.setEnabled(true);
 		userRepresentation.setEmail(user.email);
 		userRepresentation.setFirstName(user.name);

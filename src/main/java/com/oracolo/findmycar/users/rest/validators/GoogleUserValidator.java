@@ -22,5 +22,8 @@ public class GoogleUserValidator extends BaseValidator<UserDto> {
 		if(object.pictureUrl!=null && !URL_PATTERN.matcher(object.pictureUrl).matches()){
 			throw new BadRequestException("Invalid picture url");
 		}
+		if(object.password==null || object.password.isBlank()){
+			throw new BadRequestException("There must be password value");
+		}
 	}
 }
